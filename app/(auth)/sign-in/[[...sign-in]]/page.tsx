@@ -1,5 +1,10 @@
+import GradientBackground from '@/components/GradientBackground'
 import { SignIn } from '@clerk/nextjs'
 
 export default function Page() {
-    return <SignIn />
+    return (
+        <GradientBackground>
+            <SignIn />
+        </GradientBackground>
+    )
 }
