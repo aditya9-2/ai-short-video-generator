@@ -39,7 +39,7 @@ const SideNav = () => {
             <div className='grid gap-2'>
                 {options.map((menu) => (
                     <Link href={menu.path} key={menu.id}>
-                        <div className={`flex gap-3 items-center p-3 hover:bg-secondary hover:cursor-pointer hover:rounded-md
+                        <div className={`flex gap-3 items-center p-3 hover:bg-primary hover:text-white hover:cursor-pointer hover:rounded-md
                             ${path === menu.path && `bg-primary text-white rounded-md`}
                             `}>
                             <menu.icon />
@@ -48,6 +48,7 @@ const SideNav = () => {
                     </Link>
                 ))}
             </div>
+
 
         </div>
     )
