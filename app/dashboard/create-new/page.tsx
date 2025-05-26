@@ -14,6 +14,7 @@ const CreateNew = () => {
     const [formData, setFormData] = useState<Record<string, any>>({});
 
     const [loading, setLoading] = useState<boolean>(false);
+    const [videoScript, setVideoScript] = useState<string | undefined>();
 
     const onHandleInput = (fieldName: string, fieldValue: any) => {
 
@@ -26,7 +27,8 @@ const CreateNew = () => {
 
     // API for video script
     const getVideoScript = async () => {
-        const totalPrompt = 'write a script to generate ' + formData.duration + ' video on topic: ' + formData.topic + '  along with AI image prompt in ' + formData.imageStyle + ' format for each scene and give me result in JSON format with imagePrompt and ContentText as field';
+        const totalPrompt = `write a script to generate ${formData.duration} video on topic: ${formData.topic} along with AI image prompt in ${formData.imageStyle} format for each scene and give me result in JSON format with imagePrompt and ContentText as field`;
+
 
         // console.log(totalPrompt);
 
@@ -38,7 +40,9 @@ const CreateNew = () => {
 
             const data = response.data;
 
-            console.log(`data: ${JSON.stringify(data, null, 2)}`);
+            // console.log(`data: ${JSON.stringify(data, null, 2)}`);
+
+            setVideoScript(JSON.stringify(data, null, 2));
 
         } catch (err) {
 
