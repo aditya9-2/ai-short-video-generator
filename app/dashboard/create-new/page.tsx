@@ -7,10 +7,14 @@ import SelectTopic from '@/components/SelectTopic'
 import { Button } from '@/components/ui/button'
 import React, { useState } from 'react'
 import axios from 'axios';
+import CustomLoading from '@/components/CustomLoading'
 
 const CreateNew = () => {
 
-    const [formData, setFormData] = useState<Record<string, any>>({})
+    const [formData, setFormData] = useState<Record<string, any>>({});
+
+    const [loading, setLoading] = useState<boolean>(false);
+
     const onHandleInput = (fieldName: string, fieldValue: any) => {
 
         setFormData(prev => ({
@@ -21,14 +25,13 @@ const CreateNew = () => {
     }
 
     // API for video script
-
     const getVideoScript = async () => {
         const totalPrompt = 'write a script to generate ' + formData.duration + ' video on topic: ' + formData.topic + '  along with AI image prompt in ' + formData.imageStyle + ' format for each scene and give me result in JSON format with imagePrompt and ContentText as field';
 
         // console.log(totalPrompt);
 
         try {
-
+            setLoading(true);
             const response = await axios.post('/api/get-video-script', {
                 prompt: totalPrompt
             });
@@ -40,6 +43,8 @@ const CreateNew = () => {
         } catch (err) {
 
             console.log(`Error occured while call getVideo API: ${err}`);
+        } finally {
+            setLoading(false);
         }
 
 
@@ -67,6 +72,7 @@ const CreateNew = () => {
                     </Button>
                 </div>
             </div>
+            <CustomLoading loading={loading} />
         </div>
     )
 }
