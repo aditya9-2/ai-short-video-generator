@@ -35,7 +35,7 @@ const CreateNew = () => {
 
             const data = response.data;
 
-            console.log(`data: ${JSON.stringify(data)}`);
+            console.log(`data: ${JSON.stringify(data, null, 2)}`);
 
         } catch (err) {
 
