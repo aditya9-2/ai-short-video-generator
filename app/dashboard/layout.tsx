@@ -13,7 +13,7 @@ const DashboardLayout = ({
                 <SideNav />
             </div>
             <div>
-                <div className='fixed top-0 left-0 w-full'>
+                <div className='fixed top-0 left-0 w-full z-20'>
                     <Header />
                 </div>
                 <div className='md:ml-65 md:mt-2 p-4'>
