@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import textToSpeech from "@google-cloud/text-to-speech"
+import textToSpeech from "@google-cloud/text-to-speech";
 import { NextResponse } from "next/server";
+import fs from "fs";
+import util from "util";
 
 const client = new textToSpeech.TextToSpeechClient({
     apiKey: process.env.GOOGLE_TEXT_TO_SPEECH_API_KEY
@@ -8,7 +10,7 @@ const client = new textToSpeech.TextToSpeechClient({
 
 export async function POST(req: Request) {
 
-    const { text } = await req.json();
+    const { text, id } = await req.json();
 
     const request = {
         input: { text: text },
