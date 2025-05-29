@@ -34,6 +34,7 @@ const CreateNew = () => {
     const [loading, setLoading] = useState<boolean>(false);
     const [videoScript, setVideoScript] = useState<Scene[]>();
     const [audioFileURL, setAudioFileURL] = useState();
+    const [captions, setCaptions] = useState();
 
     const onHandleInput = (fieldName: string, fieldValue: any) => {
 
@@ -130,6 +131,8 @@ const CreateNew = () => {
 
             const data = response.data;
             console.log(data);
+            // @ts-ignore
+            setCaptions(data);
 
             setLoading(false);
 
