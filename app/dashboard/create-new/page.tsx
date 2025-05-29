@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client"
@@ -12,7 +13,7 @@ import CustomLoading from '@/components/CustomLoading'
 import { v4 as uuidv4 } from 'uuid';
 
 const Sdata = ` The old forest whispered secrets only the wind could understand. A young woman strayed from the path, lured by an unnatural glow. Something watched her from the darkness, something ancient and malevolent. Panic seized her, as unseen horrors pursued her through the trees. She stumbled upon a derelict mansion, its windows like empty eyesores. Within its walls, a spectral presence awaited her arrival. Screams echoed through the halls as ethereal beings encircled her. Exhausted, she fell to her knees, her scream dying into silence. Dawn broke, but the forest held its secrets, waiting for another victim.`
-
+const FILEURL = 'https://firebasestorage.googleapis.com/v0/b/g0-local.appspot.com/o/ai-short-video-files%2Fcb25e1d4-737d-4041-b433-a7fcc6837e5e.mp3?alt=media&token=a6d9dc39-09c0-4c03-8140-47af1c387041'
 // Utility to strip out "Scene <number>:" labels from a string
 function stripSceneLabels(input: string): string {
     return input
@@ -20,8 +21,6 @@ function stripSceneLabels(input: string): string {
         .replace(/\s+/g, ' ')                   // normalize whitespace
         .trim();                                 // trim ends
 }
-
-
 
 const CreateNew = () => {
 
@@ -34,6 +33,7 @@ const CreateNew = () => {
 
     const [loading, setLoading] = useState<boolean>(false);
     const [videoScript, setVideoScript] = useState<Scene[]>();
+    const [audioFileURL, setAudioFileURL] = useState();
 
     const onHandleInput = (fieldName: string, fieldValue: any) => {
 
@@ -42,6 +42,12 @@ const CreateNew = () => {
             [fieldName]: fieldValue
         }))
 
+    }
+
+    const onCreateClickhandler = () => {
+        //getVideoScript()
+        // generateAudioFile(Sdata)
+        generateCaptions(FILEURL);
     }
 
     // API Call for video script
@@ -74,6 +80,8 @@ const CreateNew = () => {
             // @ts-ignore
             generateAudioFile(JSON.stringify(cleaned));
 
+            setLoading(false);
+
         } catch (err) {
 
             console.log(`Error occured while call getVideo API: ${err}`);
@@ -100,10 +108,34 @@ const CreateNew = () => {
 
             const data = response.data;
             console.log(data);
+            // @ts-ignore
+            setAudioFileURL(data.result);
             setLoading(false);
         } catch (err) {
 
             console.log(`Error while call Audio API: ${err}`)
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    // API Call for Generating Captions
+    const generateCaptions = async (fileUrl: string) => {
+
+        try {
+            setLoading(true);
+            const response = await axios.post('/api/generate-caption', {
+                audioFileURL: fileUrl
+            });
+
+            const data = response.data;
+            console.log(data);
+
+            setLoading(false);
+
+
+        } catch (err) {
+            console.log('Error while calling generate caption API', err);
         } finally {
             setLoading(false);
         }
@@ -124,14 +156,14 @@ const CreateNew = () => {
                 <div className='flex justify-center items-center'>
                     <Button
                         className='mt-10 w-48 hover:cursor-pointer'
-                        onClick={() => generateAudioFile(Sdata)}
+                        onClick={onCreateClickhandler}
 
                     >
                         Generate
                     </Button>
                 </div>
             </div>
-            <CustomLoading loading={true} />
+            <CustomLoading loading={loading} />
         </div>
     )
 }
