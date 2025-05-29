@@ -9,7 +9,7 @@ const CustomLoading = ({ loading }: {
 
         <AlertDialog open={loading}>
 
-            <AlertDialogContent className='bg-white w-28'>
+            <AlertDialogContent className='bg-white min-w-24'>
 
                 <div className='flex flex-col justify-center items-center my-10'>
                     <Image src="/progress.gif" width={100} height={100} alt='progess gif' ></Image>
