@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client"
 
@@ -10,10 +11,17 @@ import axios from 'axios';
 import CustomLoading from '@/components/CustomLoading'
 import { v4 as uuidv4 } from 'uuid';
 
-const Sdata = ` Scene 1: A tiny cat chef begins preparing a gourmet meal. Scene 2: A dog is unsuccessfully trying to catch its tail.  Scene 3: Animals having an elegant tea party. Scene 4: A squirrel struggles to open a nut. Scene 5: An unlikely underwater bicycle ride. Scene 6: A superhero rabbit battles a villainous carrot. Scene 7: Unlikely friends share a pizza slice. Scene 8: A clumsy bear tries using a smartphone. Scene 9: A penguin slips on a banana peel. Scene 10: An unexpected race winner. 
-﻿
+const Sdata = ` The old forest whispered secrets only the wind could understand. A young woman strayed from the path, lured by an unnatural glow. Something watched her from the darkness, something ancient and malevolent. Panic seized her, as unseen horrors pursued her through the trees. She stumbled upon a derelict mansion, its windows like empty eyesores. Within its walls, a spectral presence awaited her arrival. Screams echoed through the halls as ethereal beings encircled her. Exhausted, she fell to her knees, her scream dying into silence. Dawn broke, but the forest held its secrets, waiting for another victim.`
 
-s`
+// Utility to strip out "Scene <number>:" labels from a string
+function stripSceneLabels(input: string): string {
+    return input
+        .replace(/Scene\s*\d+\s*:/gi, '')    // remove labels
+        .replace(/\s+/g, ' ')                   // normalize whitespace
+        .trim();                                 // trim ends
+}
+
+
 
 const CreateNew = () => {
 
@@ -40,8 +48,15 @@ const CreateNew = () => {
     const getVideoScript = async () => {
         const totalPrompt = `write a script to generate ${formData.duration} video on topic: ${formData.topic} along with AI image prompt in ${formData.imageStyle} format for each scene and give me result in JSON format with imagePrompt and ContentText as field`;
 
+        // Utility to clean an array of Scene objects
+        function cleanScenes(scenes: Scene[]): Scene[] {
+            return scenes.map(scene => ({
+                ...scene,
+                ContentText: stripSceneLabels(scene.ContentText)
+            }));
+        }
 
-        // console.log(totalPrompt);
+        console.log(totalPrompt);
 
         try {
             setLoading(true);
@@ -49,11 +64,15 @@ const CreateNew = () => {
                 prompt: totalPrompt
             });
 
-            // const data = response.data;
-            // console.log(`data: ${JSON.stringify(data, null, 2)}`);
             const scenes = response.data.result;  // extract the array
-            setVideoScript(scenes);
-            generateAudioFile(scenes);
+            console.log(`Sences: ${scenes}`);
+            const cleaned = cleanScenes(scenes);
+            console.log(`Before Cleaned: ${cleaned}`)
+            console.log(`Cleaned script: ${JSON.stringify(cleaned)}`);
+            // @ts-ignore
+            setVideoScript(JSON.stringify(cleaned));
+            // @ts-ignore
+            generateAudioFile(JSON.stringify(cleaned));
 
         } catch (err) {
 
@@ -64,14 +83,14 @@ const CreateNew = () => {
     }
 
     // API Call for audio script
-    const generateAudioFile = async (scenes: Scene[] | string) => {
-        const script = '';
+    const generateAudioFile = async (cleaned: Scene[] | string) => {
+        //let script = '';
         const id = uuidv4();
-        // scenes.forEach(item => {
+        // cleaned.forEach(item => {
         //     script += item.ContentText + ' ';
         // });
 
-        console.log(`Audio: ${script}`);
+        //console.log(`Final Script: ${script}`);
         try {
             setLoading(true)
             const response = await axios.post('/api/generate-audio', {
@@ -88,8 +107,6 @@ const CreateNew = () => {
         } finally {
             setLoading(false);
         }
-
-
     }
 
     return (
@@ -114,7 +131,7 @@ const CreateNew = () => {
                     </Button>
                 </div>
             </div>
-            <CustomLoading loading={loading} />
+            <CustomLoading loading={true} />
         </div>
     )
 }
